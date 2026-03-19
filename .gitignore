@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+
+# Local envs
+.env
+.venv/
+venv/
+
+# Runtime artifacts
+logs/
+results/
+outputs/
+tmp/
+cache/
+.cache/
+
+# Secrets
+*.pem
+*.key
+*.token
+
+# IDE
+.DS_Store
+.idea/
+.vscode/

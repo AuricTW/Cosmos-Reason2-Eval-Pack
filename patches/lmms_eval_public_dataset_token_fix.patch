@@ -1,0 +1,56 @@
+diff --git a/lmms_eval/tasks/docvqa/_default_template_docvqa_yaml b/lmms_eval/tasks/docvqa/_default_template_docvqa_yaml
+index 80acd7b..a5220b3 100755
+--- a/lmms_eval/tasks/docvqa/_default_template_docvqa_yaml
++++ b/lmms_eval/tasks/docvqa/_default_template_docvqa_yaml
+@@ -1,7 +1,7 @@
+ dataset_path: lmms-lab/DocVQA
+ dataset_name: DocVQA
+ dataset_kwargs:
+-  token: True
++  token: False
+ output_type: generate_until
+ doc_to_visual: !function utils.docvqa_doc_to_visual
+ doc_to_text: !function utils.docvqa_doc_to_text
+diff --git a/lmms_eval/tasks/docvqa/docvqa_val_lite.yaml b/lmms_eval/tasks/docvqa/docvqa_val_lite.yaml
+index 95d065d..28c0387 100644
+--- a/lmms_eval/tasks/docvqa/docvqa_val_lite.yaml
++++ b/lmms_eval/tasks/docvqa/docvqa_val_lite.yaml
+@@ -7,7 +7,7 @@ metric_list:
+ dataset_path: lmms-lab/LMMs-Eval-Lite
+ dataset_name: docvqa_val
+ dataset_kwargs:
+-  token: True
++  token: False
+ output_type: generate_until
+ doc_to_visual: !function utils.docvqa_doc_to_visual
+ doc_to_text: !function utils.docvqa_doc_to_text
+@@ -23,4 +23,3 @@ lmms_eval_specific_kwargs:
+   qwen_vl:
+     pre_prompt: ""
+     post_prompt: " Answer:"
+-
+diff --git a/lmms_eval/tasks/mmbench/_default_template_mmbench_en_yaml b/lmms_eval/tasks/mmbench/_default_template_mmbench_en_yaml
+index 71a6df9..18966d2 100755
+--- a/lmms_eval/tasks/mmbench/_default_template_mmbench_en_yaml
++++ b/lmms_eval/tasks/mmbench/_default_template_mmbench_en_yaml
+@@ -1,6 +1,6 @@
+ dataset_path: lmms-lab/MMBench
+ dataset_kwargs:
+-  token: True
++  token: False
+ doc_to_target: "answer"
+ lmms_eval_specific_kwargs:
+   default:
+diff --git a/lmms_eval/tasks/mmbench/mmbench_en_dev_lite.yaml b/lmms_eval/tasks/mmbench/mmbench_en_dev_lite.yaml
+index 226c484..a509cd4 100644
+--- a/lmms_eval/tasks/mmbench/mmbench_en_dev_lite.yaml
++++ b/lmms_eval/tasks/mmbench/mmbench_en_dev_lite.yaml
+@@ -3,7 +3,7 @@ test_split: lite
+ dataset_path: lmms-lab/LMMs-Eval-Lite
+ dataset_name: mmbench_en_dev
+ dataset_kwargs:
+-  token: True
++  token: False
+ doc_to_target: "answer"
+ lmms_eval_specific_kwargs:
+   default:

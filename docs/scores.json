@@ -1,0 +1,25 @@
+{
+  "model": "nvidia/Cosmos-Reason2-2B",
+  "environment": {
+    "gpu": "NVIDIA GeForce RTX 4090 24 GB",
+    "python": "3.10.18",
+    "lmms_eval_commit": "88b23e2"
+  },
+  "scores": {
+    "textvqa_val": {
+      "metric": "exact_match",
+      "exact": 0.7598200000000049,
+      "table_value": 75.98
+    },
+    "docvqa_val": {
+      "metric": "anls",
+      "exact": 0.9117385941613753,
+      "table_value": 91.17
+    },
+    "mmbench_en_dev": {
+      "metric": "gpt_eval_score",
+      "exact": 74.65635738831615,
+      "table_value": 74.7
+    }
+  }
+}
