@@ -2,22 +2,6 @@
 
 This folder is a sanitized export of the local evaluation work for `nvidia/Cosmos-Reason2-2B`.
 
-It is meant to be safe to upload as a GitHub repository. It includes:
-
-- reproduction notes
-- environment and command summaries
-- a small model-loading probe script
-- local `lmms-eval` patch files
-- final benchmark score summaries
-
-It intentionally does **not** include:
-
-- raw benchmark `samples.jsonl`
-- full terminal logs
-- Hugging Face cache contents
-- the full cloned `lmms-eval` repo
-- benchmark dataset artifacts
-
 ## Final scores
 
 | Benchmark | Metric | Exact | Table value |
