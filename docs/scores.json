@@ -1,63 +1,182 @@
 {
-  "model": "nvidia/Cosmos-Reason2-2B",
   "evaluation": {
     "framework": "lmms_eval",
     "backend": "qwen3_vl",
-    "model_args": "pretrained=nvidia/Cosmos-Reason2-2B,device_map=auto,attn_implementation=sdpa",
     "lmms_eval_commit": "88b23e2",
     "python": "3.10.18",
-    "gpu": "NVIDIA GeForce RTX 4090 24 GB"
+    "gpu": "NVIDIA GeForce RTX 4090 24 GB",
+    "common_model_args_pattern": "pretrained=<MODEL_ID>,device_map=auto,attn_implementation=sdpa"
   },
-  "scores": {
-    "textvqa_val": {
-      "metric": "exact_match",
-      "exact": 0.7598200000000049,
-      "stderr": 0.005638073349489148,
-      "table_value": 75.98,
-      "effective_samples": 5000,
-      "throughput": {
-        "total_output_tokens": 20696,
-        "generation_time_seconds": 732.0858459472656,
-        "avg_tokens_per_second": 28.269908665179678
-      }
-    },
-    "docvqa_val": {
-      "metric": "anls",
-      "exact": 0.9117385941613753,
-      "stderr": 0.0035035279431835085,
-      "table_value": 91.17,
-      "effective_samples": 5349,
-      "batch_size": 1,
-      "throughput": {
-        "total_output_tokens": 32526,
-        "generation_time_seconds": 3159.7392587661743,
-        "avg_tokens_per_second": 10.29388735471194
-      }
-    },
-    "mmbench_en_dev": {
-      "metric": "gpt_eval_score",
-      "exact": 74.65635738831615,
-      "table_value": 74.7,
-      "effective_samples": 4329,
-      "throughput": {
-        "total_output_tokens": 8761,
-        "generation_time_seconds": 351.7118492126465,
-        "avg_tokens_per_second": 24.90959579443416
-      },
-      "category_highlights": {
-        "strongest": {
-          "identity_reasoning": 97.778,
-          "image_scene": 97.115,
-          "action_recognition": 94.444,
-          "attribute_recognition": 90.541
+  "models": {
+    "nvidia/Cosmos-Reason2-2B": {
+      "model_args": "pretrained=nvidia/Cosmos-Reason2-2B,device_map=auto,attn_implementation=sdpa",
+      "scores": {
+        "textvqa_val": {
+          "metric": "exact_match",
+          "exact": 0.7598200000000049,
+          "stderr": 0.005638073349489148,
+          "table_value": 75.98,
+          "effective_samples": 5000,
+          "batch_size": 1,
+          "throughput": {
+            "total_output_tokens": 20696,
+            "generation_time_seconds": 732.0858459472656,
+            "avg_tokens_per_second": 28.269908665179678
+          }
         },
-        "weakest": {
-          "spatial_relationship": 26.667,
-          "future_prediction": 40.0,
-          "nature_relation": 52.083,
-          "image_quality": 54.717
+        "docvqa_val": {
+          "metric": "anls",
+          "exact": 0.9117385941613753,
+          "stderr": 0.0035035279431835085,
+          "table_value": 91.17,
+          "effective_samples": 5349,
+          "batch_size": 1,
+          "throughput": {
+            "total_output_tokens": 32526,
+            "generation_time_seconds": 3159.7392587661743,
+            "avg_tokens_per_second": 10.29388735471194
+          }
+        },
+        "mmbench_en_dev": {
+          "metric": "gpt_eval_score",
+          "exact": 74.65635738831615,
+          "table_value": 74.7,
+          "effective_samples": 4329,
+          "batch_size": 1,
+          "throughput": {
+            "total_output_tokens": 8761,
+            "generation_time_seconds": 351.7118492126465,
+            "avg_tokens_per_second": 24.90959579443416
+          },
+          "category_highlights": {
+            "strongest": {
+              "identity_reasoning": 97.778,
+              "image_scene": 97.115,
+              "action_recognition": 94.444,
+              "attribute_recognition": 90.541
+            },
+            "weakest": {
+              "spatial_relationship": 26.667,
+              "future_prediction": 40.0,
+              "nature_relation": 52.083,
+              "image_quality": 54.717
+            }
+          }
         }
       }
+    },
+    "nvidia/Cosmos-Reason2-8B": {
+      "model_args": "pretrained=nvidia/Cosmos-Reason2-8B,device_map=auto,attn_implementation=sdpa",
+      "validation": {
+        "load_probe_success": true,
+        "observed_processor_class": "Qwen3VLProcessor",
+        "observed_model_class": "Qwen3VLForConditionalGeneration",
+        "gpu_allocated_bytes_after_probe": 17534319104,
+        "gpu_reserved_bytes_after_probe": 17555259392,
+        "smoke_tests": {
+          "mmbench_en_dev_lite": {
+            "metric": "gpt_eval_score",
+            "exact": 100.0,
+            "effective_samples": 8,
+            "batch_size": 1
+          },
+          "docvqa_val_lite": {
+            "metric": "anls",
+            "exact": 0.9095394736842105,
+            "stderr": 0.06287911825923581,
+            "effective_samples": 8,
+            "batch_size": 1
+          }
+        }
+      },
+      "scores": {
+        "textvqa_val": {
+          "metric": "exact_match",
+          "exact": 0.7946800000000042,
+          "stderr": 0.005283703532996975,
+          "table_value": 79.47,
+          "effective_samples": 5000,
+          "batch_size": 1,
+          "throughput": {
+            "total_output_tokens": 21364,
+            "generation_time_seconds": 1352.1935,
+            "avg_tokens_per_second": 15.7995
+          }
+        },
+        "docvqa_val": {
+          "metric": "anls",
+          "exact": 0.9425976346348114,
+          "stderr": 0.0028426622917632287,
+          "table_value": 94.26,
+          "effective_samples": 5349,
+          "batch_size": 1,
+          "throughput": {
+            "total_output_tokens": 33318,
+            "generation_time_seconds": 5962.517,
+            "avg_tokens_per_second": 5.5879
+          }
+        },
+        "mmbench_en_dev": {
+          "metric": "gpt_eval_score",
+          "exact": 83.4192439862543,
+          "table_value": 83.4,
+          "effective_samples": 4329,
+          "batch_size": 1,
+          "throughput": {
+            "total_output_tokens": 8700,
+            "generation_time_seconds": 461.4259,
+            "avg_tokens_per_second": 18.8546
+          },
+          "category_highlights": {
+            "strongest": {
+              "identity_reasoning": 97.778,
+              "image_scene": 96.154,
+              "attribute_recognition": 95.946,
+              "action_recognition": 94.444
+            },
+            "weakest": {
+              "future_prediction": 55.0,
+              "spatial_relationship": 57.778,
+              "physical_relation": 58.333,
+              "object_localization": 64.198
+            }
+          }
+        }
+      }
+    }
+  },
+  "comparison": {
+    "exact_score_delta_8b_minus_2b": {
+      "textvqa_val": 0.034859999999999225,
+      "docvqa_val": 0.030859040473436128,
+      "mmbench_en_dev": 8.762886597938149
+    },
+    "table_value_delta_8b_minus_2b": {
+      "textvqa_val": 3.49,
+      "docvqa_val": 3.09,
+      "mmbench_en_dev": 8.7
+    },
+    "mmbench_category_delta_8b_minus_2b": {
+      "action_recognition": 0.0,
+      "attribute_comparison": 20.454,
+      "attribute_recognition": 5.405,
+      "celebrity_recognition": 4.04,
+      "function_reasoning": 2.532,
+      "future_prediction": 15.0,
+      "identity_reasoning": 0.0,
+      "image_emotion": -4.0,
+      "image_quality": 18.868,
+      "image_scene": -0.961,
+      "image_style": 1.887,
+      "image_topic": 2.778,
+      "nature_relation": 35.417,
+      "object_localization": 3.704,
+      "ocr": 20.513,
+      "physical_property_reasoning": 18.667,
+      "physical_relation": -4.167,
+      "social_relation": 0.0,
+      "spatial_relationship": 31.111,
+      "structuralized_imagetext_understanding": 16.667
     }
   }
 }

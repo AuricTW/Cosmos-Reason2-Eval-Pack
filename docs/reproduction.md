@@ -2,9 +2,9 @@
 
 ## Purpose
 
-This document records the environment, setup steps, local patches, and evaluation commands used to run `nvidia/Cosmos-Reason2-2B` through `lmms-eval` with the `Qwen3-VL` interface.
+This document records the environment, setup steps, local patches, and evaluation commands used to run `nvidia/Cosmos-Reason2-2B` and `nvidia/Cosmos-Reason2-8B` through `lmms-eval` with the `Qwen3-VL` interface.
 
-The intent is to make the evaluation reproducible without requiring the full original workspace layout.
+The intent is to make both evaluations reproducible without requiring the full original workspace layout.
 
 ## Environment
 
@@ -31,11 +31,18 @@ The intent is to make the evaluation reproducible without requiring the full ori
 | `decord` | `0.6.0` |
 | `lmms_eval` | `0.7.1` |
 
+## Evaluated variants
+
+| Model | Load probe | MMBench full | TextVQA full | DocVQA full | Stable full-run batch size on this machine |
+| --- | --- | --- | --- | --- | ---: |
+| `nvidia/Cosmos-Reason2-2B` | success | success | success | success | `1` |
+| `nvidia/Cosmos-Reason2-8B` | success | success | success | success | `1` |
+
 ## Prerequisites
 
-- Access to `nvidia/Cosmos-Reason2-2B` on Hugging Face
+- Access to the gated `nvidia/Cosmos-Reason2-2B` and `nvidia/Cosmos-Reason2-8B` repositories on Hugging Face
 - A working Hugging Face login on the evaluation machine
-- Sufficient GPU memory for single-batch inference on a 2B Qwen3-VL-compatible model
+- Sufficient GPU memory for single-batch inference on Qwen3-VL-compatible Cosmos-Reason2 variants
 
 ## Setup
 
@@ -66,7 +73,7 @@ python3 -m pip install -e "$LMMS_EVAL_DIR[video-legacy]"
 hf auth whoami
 ```
 
-### 4. Optional environment variables used in the original run
+### 4. Optional environment variables used in the original runs
 
 ```bash
 export HF_HOME=/root/.cache/huggingface
@@ -80,13 +87,29 @@ For `DocVQA`, the following allocator setting was also used:
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 ```
 
+## Variant selection
+
+Set the model you want to evaluate before running the probe or benchmark commands:
+
+```bash
+export MODEL_ID=nvidia/Cosmos-Reason2-2B
+export MODEL_TAG=cosmos_reason2_2b
+```
+
+or:
+
+```bash
+export MODEL_ID=nvidia/Cosmos-Reason2-8B
+export MODEL_TAG=cosmos_reason2_8b
+```
+
 ## Model load probe
 
 The first validation step was a direct `transformers` load probe using the Qwen3-VL model class.
 
 ```bash
 python3 scripts/load_vlm_probe.py \
-  --model nvidia/Cosmos-Reason2-2B \
+  --model "$MODEL_ID" \
   --dtype float16 \
   --device-map auto \
   --attn-implementation sdpa
@@ -119,26 +142,55 @@ Included for traceability only:
 $EVAL_PACK_DIR/patches/lmms_eval_qwen3_vl_oom_retry_experiment.patch
 ```
 
-This patch captures an explored fallback strategy for `DocVQA` OOM handling, but it was not the final stable method used for the official `DocVQA` score in this repository.
+This patch captures an explored fallback strategy for `DocVQA` OOM handling, but it was not the final stable method used for the official scores in this repository.
 
-## Evaluation commands
+## Common evaluator settings
 
 All official scores in this repository were produced with `--model qwen3_vl` and:
 
 ```bash
---model_args pretrained=nvidia/Cosmos-Reason2-2B,device_map=auto,attn_implementation=sdpa
+--model_args pretrained=$MODEL_ID,device_map=auto,attn_implementation=sdpa
+```
+
+The official full runs reported in this repository used `--batch_size 1`.
+
+## Evaluation commands
+
+Run all commands from inside the `lmms-eval` checkout:
+
+```bash
+cd "$LMMS_EVAL_DIR"
+```
+
+### MMBench smoke
+
+```bash
+HF_HOME=/root/.cache/huggingface \
+HF_HUB_ENABLE_HF_TRANSFER=1 \
+WANDB_MODE=disabled \
+python3 -m lmms_eval eval \
+  --model qwen3_vl \
+  --model_args pretrained=$MODEL_ID,device_map=auto,attn_implementation=sdpa \
+  --tasks mmbench_en_dev_lite \
+  --batch_size 1 \
+  --limit 8 \
+  --output_path "./results/${MODEL_TAG}_mmbench_smoke" \
+  --log_samples \
+  --verbosity INFO
 ```
 
 ### MMBench full
 
 ```bash
-HF_HOME=/root/.cache/huggingface HF_HUB_ENABLE_HF_TRANSFER=1 WANDB_MODE=disabled \
+HF_HOME=/root/.cache/huggingface \
+HF_HUB_ENABLE_HF_TRANSFER=1 \
+WANDB_MODE=disabled \
 python3 -m lmms_eval eval \
   --model qwen3_vl \
-  --model_args pretrained=nvidia/Cosmos-Reason2-2B,device_map=auto,attn_implementation=sdpa \
+  --model_args pretrained=$MODEL_ID,device_map=auto,attn_implementation=sdpa \
   --tasks mmbench_en_dev \
   --batch_size 1 \
-  --output_path ./results/cosmos_reason2_mmbench_full \
+  --output_path "./results/${MODEL_TAG}_mmbench_full" \
   --log_samples \
   --verbosity INFO
 ```
@@ -146,13 +198,33 @@ python3 -m lmms_eval eval \
 ### TextVQA full
 
 ```bash
-HF_HOME=/root/.cache/huggingface HF_HUB_ENABLE_HF_TRANSFER=1 WANDB_MODE=disabled \
+HF_HOME=/root/.cache/huggingface \
+HF_HUB_ENABLE_HF_TRANSFER=1 \
+WANDB_MODE=disabled \
 python3 -m lmms_eval eval \
   --model qwen3_vl \
-  --model_args pretrained=nvidia/Cosmos-Reason2-2B,device_map=auto,attn_implementation=sdpa \
+  --model_args pretrained=$MODEL_ID,device_map=auto,attn_implementation=sdpa \
   --tasks textvqa_val \
   --batch_size 1 \
-  --output_path ./results/cosmos_reason2_textvqa_full \
+  --output_path "./results/${MODEL_TAG}_textvqa_full" \
+  --log_samples \
+  --verbosity INFO
+```
+
+### DocVQA smoke
+
+```bash
+HF_HOME=/root/.cache/huggingface \
+HF_HUB_ENABLE_HF_TRANSFER=1 \
+WANDB_MODE=disabled \
+PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True \
+python3 -m lmms_eval eval \
+  --model qwen3_vl \
+  --model_args pretrained=$MODEL_ID,device_map=auto,attn_implementation=sdpa \
+  --tasks docvqa_val_lite \
+  --batch_size 1 \
+  --limit 8 \
+  --output_path "./results/${MODEL_TAG}_docvqa_smoke" \
   --log_samples \
   --verbosity INFO
 ```
@@ -166,10 +238,10 @@ WANDB_MODE=disabled \
 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True \
 python3 -m lmms_eval eval \
   --model qwen3_vl \
-  --model_args pretrained=nvidia/Cosmos-Reason2-2B,device_map=auto,attn_implementation=sdpa \
+  --model_args pretrained=$MODEL_ID,device_map=auto,attn_implementation=sdpa \
   --tasks docvqa_val \
   --batch_size 1 \
-  --output_path ./results/cosmos_reason2_docvqa_full_bs1 \
+  --output_path "./results/${MODEL_TAG}_docvqa_full_bs1" \
   --log_samples \
   --verbosity INFO
 ```
@@ -180,29 +252,30 @@ python3 -m lmms_eval eval \
 
 - Full task used: `mmbench_en_dev`
 - Final metric: `gpt_eval_score`
-- Stable at `batch_size=1` on the test machine
+- Official 2B and 8B full runs were stable at `batch_size=1`
 
 ### TextVQA
 
 - Full task used: `textvqa_val`
 - Final metric: `exact_match`
-- Stable at `batch_size=1`
+- Official 2B and 8B full runs were stable at `batch_size=1`
 
 ### DocVQA
 
 - Full task used: `docvqa_val`
 - Final metric: `ANLS`
-- Full evaluation was memory-sensitive on a single 24 GB GPU
-- `batch_size=1` was the final stable configuration
+- Full evaluation was the most memory-sensitive benchmark on a single 24 GB GPU
+- `batch_size=1` was the final stable configuration for both 2B and 8B
 
 ## Troubleshooting notes
 
-- If `Cosmos-Reason2-2B` fails to load, check Hugging Face gated-model access first.
+- If either model fails to load, check Hugging Face gated-model access first.
 - If public dataset loading fails with a token-related error, verify that the public dataset patch has been applied.
 - If `DocVQA` hits CUDA OOM at larger batch sizes, reduce to `batch_size=1`.
+- If the 8B evaluation becomes unstable, make sure no other GPU workloads are sharing the same RTX 4090.
 
 ## Summary
 
-- `Cosmos-Reason2-2B` successfully loads through the `Qwen3-VL` interface.
-- `lmms-eval` works as the main evaluation harness for this model in this setup.
-- `DocVQA` required the most conservative batching configuration, but completed successfully and produced the strongest score in this evaluation pack.
+- `Cosmos-Reason2-2B` and `Cosmos-Reason2-8B` successfully load through the `Qwen3-VL` interface.
+- `lmms-eval` works as the main evaluation harness for both variants in this setup.
+- `DocVQA` required the most conservative batching configuration, but completed successfully for both variants and produced the strongest score family-wide in this evaluation pack.
