@@ -1,4 +1,4 @@
-# Cosmos-Reason2 Evaluation Pack
+# Cosmos-Reason2 Evaluation Pack 
 
 This repository documents a reproducible evaluation workflow for `nvidia/Cosmos-Reason2-2B` and `nvidia/Cosmos-Reason2-8B` using `lmms-eval` and the `Qwen3-VL` model interface.
 
